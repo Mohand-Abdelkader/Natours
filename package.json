@@ -1,0 +1,15 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "learing node , express and mongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "Mohand Abdelkader",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
