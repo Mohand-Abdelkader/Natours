@@ -10,6 +10,8 @@
   "author": "Mohand Abdelkader",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "natours": "file:"
   }
 }
