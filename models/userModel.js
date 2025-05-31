@@ -20,6 +20,7 @@ const userSchema = new mongooes.Schema({
     type: String,
   },
   password: {
+    select: false,
     type: String,
     required: [true, 'you must enter a password'],
     minLength: 8,
@@ -47,6 +48,13 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongooes.model('User', userSchema);
 
