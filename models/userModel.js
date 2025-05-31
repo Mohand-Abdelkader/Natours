@@ -1,5 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const mongooes = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongooes.Schema({
   name: {
@@ -30,8 +32,20 @@ const userSchema = new mongooes.Schema({
         // this will work only in create because this work only on created doc
         return val === this.password;
       },
+      message: 'password are not the same',
     },
   },
+});
+
+userSchema.pre('save', async function (next) {
+  //only run this function if password realy modifesd
+
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+
+  this.passwordConfirm = undefined;
+
+  next();
 });
 
 const User = mongooes.model('User', userSchema);
