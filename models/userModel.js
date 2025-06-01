@@ -19,6 +19,11 @@ const userSchema = new mongooes.Schema({
   photo: {
     type: String,
   },
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user',
+  },
   password: {
     select: false,
     type: String,
