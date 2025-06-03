@@ -105,14 +105,42 @@ exports.restrictTo = (...roles) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //1) get user based on email
   const user = await User.findOne({ email: req.body.email });
+
   if (!user) {
     return next(new AppError('there is no user with this email address', 404));
   }
 
   //2)generate the random reset token
   const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSafe: false });
+  await user.save({ validateBeforeSave: false });
+
   //3) send it to user's email
+  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+
+  const message = `forgot your password? submit a Patch request with your new password and password confirm to : ${resetURL}. \n if you did't forget your password please ignore this email`;
+
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Your Password Reset token (Valid for 10min) ',
+      message,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'token sent to email',
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new AppError(
+        'there was an error sending the email, try again later',
+        500,
+      ),
+    );
+  }
 });
 
 exports.resetPassword = (req, res, next) => {};
