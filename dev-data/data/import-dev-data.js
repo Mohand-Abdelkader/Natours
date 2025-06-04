@@ -13,15 +13,14 @@ const DB = process.env.DATABASE.replace(
 mongooes
   .connect(DB, {
     useNewUrlParser: true,
+    useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
   .then(() => console.log('DB connection successful!'))
   .catch((err) => console.error('DB connection error:', err));
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'),
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
 
 const importData = async () => {
   try {
