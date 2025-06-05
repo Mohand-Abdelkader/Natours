@@ -10,14 +10,24 @@ router.use('/:tourId/reviews', reviewRouter);
 // router.param('id', tourControllers.checkID);
 
 router.route('/tour-stats').get(tourControllers.getTourStats);
-router.route('/monthly-plan/:year').get(tourControllers.getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide', 'guide'),
+    tourControllers.getMonthlyPlan,
+  );
 router
   .route('/top-5-cheap')
   .get(tourControllers.aliasTopTours, tourControllers.getAllTours);
 router
   .route('/')
-  .post(tourControllers.createTour)
-  .get(authControllers.protect, tourControllers.getAllTours);
+  .get(tourControllers.getAllTours)
+  .post(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide'),
+    tourControllers.createTour,
+  );
 router
   .route('/:id')
   .delete(
@@ -25,15 +35,11 @@ router
     authControllers.restrictTo('admin', 'lead-guide'),
     tourControllers.deleteTour,
   )
-  .patch(tourControllers.updateTour)
+  .patch(
+    authControllers.protect,
+    authControllers.restrictTo('admin', 'lead-guide'),
+    tourControllers.updateTour,
+  )
   .get(tourControllers.getTour);
-
-// router
-//   .route('/:tourId/reviews')
-//   .post(
-//     authControllers.protect,
-//     authControllers.restrictTo('user'),
-//     reviewControllers.createReview,
-//   );
 
 module.exports = router;

@@ -14,14 +14,16 @@ router.patch(
   authControllers.protect,
   authControllers.updatePassword,
 );
-router.get(
-  '/me',
-  authControllers.protect,
-  userControllers.getMe,
-  userControllers.getUser,
-);
-router.patch('/updateMe', authControllers.protect, userControllers.updateMe);
-router.delete('/deleteMe', authControllers.protect, userControllers.deleteMe);
+
+//this protect all the route that comes after it
+router.use(authControllers.protect);
+
+router.get('/me', userControllers.getMe, userControllers.getUser);
+router.patch('/updateMe', userControllers.updateMe);
+router.delete('/deleteMe', userControllers.deleteMe);
+
+router.use(authControllers.restrictTo('admin'));
+
 router
   .route('/')
   .get(userControllers.getAllUsers)
