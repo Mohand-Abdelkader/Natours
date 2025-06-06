@@ -1,4 +1,6 @@
+/* eslint-disable prefer-arrow-callback */
 const mongoose = require('mongoose');
+const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -48,6 +50,52 @@ reviewSchema.pre(/^find/, function (next) {
   });
   return next();
 });
+
+reviewSchema.statics.calcAverageRating = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingQuantity: stats[0].nRating,
+      ratingAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingQuantity: 0,
+      ratingAverage: 4.5,
+    });
+  }
+};
+
+reviewSchema.post('save', function () {
+  //this point to current review
+  this.constructor.calcAverageRating(this.tour);
+});
+
+//this is jonas solution
+// reviewSchema.pre(/^findOneAnd/, async function (next) {
+//   this.r = await this.findOne();
+//   next();
+// });
+// reviewSchema.post(/^findOneAnd/, async function () {
+//   this.r.constructor.calcAverageRating(this.r.tour);
+// });
+
+//Post middleware will get the doc as the first argument. So the post middleware will get the updated review as an argument. So you can just do:
+reviewSchema.post(/^findOneAnd/, async function (doc) {
+  await doc.constructor.calcAverageRatings(doc.tour);
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;
