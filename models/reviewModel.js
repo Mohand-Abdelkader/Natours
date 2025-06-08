@@ -77,6 +77,10 @@ reviewSchema.statics.calcAverageRating = async function (tourId) {
   }
 };
 
+//this line to make the user have only one review per tour,
+// so we made index that will depend on each user and tour id,
+// and we set it to unique true to make sure
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 reviewSchema.post('save', function () {
   //this point to current review
   this.constructor.calcAverageRating(this.tour);

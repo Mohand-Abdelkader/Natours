@@ -20,6 +20,10 @@ router
 router
   .route('/top-5-cheap')
   .get(tourControllers.aliasTopTours, tourControllers.getAllTours);
+
+router
+  .route('/tours-within/:distance/center/:latLng/unit/:unit')
+  .get(tourControllers.getToursWithin);
 router
   .route('/')
   .get(tourControllers.getAllTours)
