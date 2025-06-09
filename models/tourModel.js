@@ -166,6 +166,15 @@ tourSchema.post(/^find/, function (docs, next) {
 //   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
 //   next();
 // });
+tourSchema.pre('aggregate', function (next) {
+  // Hide secret tours if geoNear is NOT used
+  if (!(this.pipeline().length > 0 && '$geoNear' in this.pipeline()[0])) {
+    this.pipeline().unshift({
+      $match: { secretTour: { $ne: true } },
+    });
+  }
+  next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
