@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unsupported-features/es-syntax */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/order */
 const express = require('express');
@@ -22,7 +23,15 @@ app.set('views', path.join(__dirname, 'views'));
 //GLOBAL MIDDLEWARE
 
 //set security http headers
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      'script-src': ["'self'", 'https://unpkg.com'],
+      'img-src': ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+    },
+  }),
+);
 
 //Development logging
 if (process.env.NODE_ENV === 'development') {
