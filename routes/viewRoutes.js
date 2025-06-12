@@ -4,6 +4,7 @@ const authControllers = require('../controllers/authControllers');
 
 const router = express.Router();
 
+router.get('/me', authControllers.protect, viewControllers.getAccount);
 router.use(authControllers.isLoggedIn);
 
 router.get('/', viewControllers.getOverView);
