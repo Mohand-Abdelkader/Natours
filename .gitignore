@@ -9,12 +9,14 @@ lerna-debug.log*
 
 node_modules
 config.env
-bundle.js
 env
 dist
 dist-ssr
 *.local
-
+# Ignore all bundle.js files anywhere in the project
+**/bundle.js
+# Ignore .cache folder at root level
+/.cache/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
