@@ -87,18 +87,18 @@ reviewSchema.post('save', function () {
 });
 
 //this is jonas solution
-// reviewSchema.pre(/^findOneAnd/, async function (next) {
-//   this.r = await this.findOne();
-//   next();
-// });
-// reviewSchema.post(/^findOneAnd/, async function () {
-//   this.r.constructor.calcAverageRating(this.r.tour);
-// });
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  next();
+});
+reviewSchema.post(/^findOneAnd/, async function () {
+  this.r.constructor.calcAverageRating(this.r.tour);
+});
 
 //Post middleware will get the doc as the first argument. So the post middleware will get the updated review as an argument. So you can just do:
-reviewSchema.post(/^findOneAnd/, async function (doc) {
-  await doc.constructor.calcAverageRatings(doc.tour);
-});
+// reviewSchema.post(/^findOneAnd/, async function (doc) {
+//   await doc.constructor.calcAverageRatings(doc.tour);
+// });
 
 const Review = mongoose.model('Review', reviewSchema);
 
