@@ -15,13 +15,15 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const reviewRouter = require('./routes/reviewRoute');
 const path = require('path');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 //GLOBAL MIDDLEWARE
-
+app.use(cors());
 //set security http headers
 app.use(
   helmet.contentSecurityPolicy({
@@ -49,6 +51,7 @@ app.use('/api', limiter);
 
 //Body Parser, reading data from the body into req.body
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 // Data sanitization against noSql query injection
 app.use(mongoSanitize());
@@ -74,7 +77,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
+  console.log(req.cookies);
   next();
 });
 

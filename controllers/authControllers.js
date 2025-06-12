@@ -59,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('incorrect email or password'), 401);
+    return next(new AppError('incorrect email or password', 401));
   }
 
   //3) if everything is ok
@@ -75,6 +75,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
   if (!token) {
     return next(
@@ -97,6 +99,32 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   req.user = freshUser;
   // grant access to the
+  next();
+});
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  //1)getting the token and check if it's there
+
+  if (req.cookies.jwt) {
+    //2)verification validate token
+    const decode = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+
+    //3) check if user still exists
+    const freshUser = await User.findById(decode.id);
+
+    if (!freshUser) {
+      return next();
+    }
+    //4) check if user change password after the token was issued
+    if (freshUser.changedPasswordAfter(decode.iat)) return next();
+
+    //there is a Logged in user
+    res.locals.user = freshUser;
+    return next();
+  }
   next();
 });
 
