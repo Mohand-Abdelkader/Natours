@@ -9,12 +9,18 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.form = 'Mohand <hello@mohand.com>';
+    this.from = process.env.SENDGRID_EMAIL_FROM;
   }
 
   createTransport() {
     if (process.env.NODE_ENV === 'production') {
-      return 1;
+      return nodemailer.createTransport({
+        service: 'SendGrid',
+        auth: {
+          user: process.env.SENDGRID_USERNAME,
+          pass: process.env.SENDGRID_PASSWORD,
+        },
+      });
     }
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -38,12 +44,13 @@ module.exports = class Email {
     //2 define email options
 
     const mailOptions = {
-      from: this.form,
+      from: this.from,
       to: this.to,
       subject,
       html,
       text: convert(html),
     };
+    console.log(mailOptions.from);
 
     //3 create transport and send email
 
