@@ -13,9 +13,6 @@ const passwordForm = document.querySelector('.form-user-settings');
 const bookBtn = document.getElementById('book-tour');
 // values
 
-if (true) {
-  console.log('test');
-}
 //Delegation
 if (mapContainer) {
   const locations = JSON.parse(mapContainer.dataset.locations);
@@ -68,7 +65,6 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (bookBtn) {
   bookBtn.addEventListener('click', (e) => {
-    console.log('click');
     e.target.textContent = 'Processing';
     const { tourId } = e.target.dataset;
     bookTour(tourId);

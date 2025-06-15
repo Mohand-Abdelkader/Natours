@@ -50,7 +50,6 @@ module.exports = class Email {
       html,
       text: convert(html),
     };
-    console.log(mailOptions.from);
 
     //3 create transport and send email
 
@@ -62,7 +61,6 @@ module.exports = class Email {
   }
 
   async sendPasswordReset() {
-    console.log('im working');
     await this.send(
       'passwordReset',
       'Your password reset token (valid for only 10 minutes)',

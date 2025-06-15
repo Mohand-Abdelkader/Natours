@@ -18,6 +18,7 @@ const reviewRouter = require('./routes/reviewRoute');
 const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use(
     },
   }),
 );
-
+app.use(compression());
 //Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
