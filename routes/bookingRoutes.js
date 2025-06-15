@@ -3,7 +3,6 @@ const bookingControllers = require('../controllers/bookingControllers');
 const authControllers = require('../controllers/authControllers');
 
 const router = express.Router();
-router.get('/', bookingControllers.test);
 
 router.get(
   '/checkout-session/:tourID',
