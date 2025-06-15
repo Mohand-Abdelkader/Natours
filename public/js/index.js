@@ -3,14 +3,19 @@ import '@babel/polyfill';
 import { login, logout } from './login.js';
 import { displayMap } from './leaflet.js';
 import { updateSettings } from './updateSettings.js';
+import { bookTour } from './stripe.js';
 //DOM Elements
 const mapContainer = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const updateUserForm = document.querySelector('.form-user-data');
 const passwordForm = document.querySelector('.form-user-settings');
+const bookBtn = document.getElementById('book-tour');
 // values
 
+if (true) {
+  console.log('test');
+}
 //Delegation
 if (mapContainer) {
   const locations = JSON.parse(mapContainer.dataset.locations);
@@ -60,3 +65,12 @@ if (passwordForm) {
 }
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    console.log('click');
+    e.target.textContent = 'Processing';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
+  });
+}

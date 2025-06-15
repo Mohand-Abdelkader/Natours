@@ -25,13 +25,25 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 //GLOBAL MIDDLEWARE
 app.use(cors());
-//set security http headers
+// set security http headers
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+//       'script-src': ["'self'", 'https://unpkg.com'],
+//       'img-src': ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+//     },
+//   }),
+// );
+// app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      'script-src': ["'self'", 'https://unpkg.com'],
-      'img-src': ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https://unpkg.com', 'https://js.stripe.com'],
+      connectSrc: ["'self'", 'ws:', 'http:', 'https:'], // 👈 fix here
+      imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org'],
+      frameSrc: ["'self'", 'https://js.stripe.com'], // required for Stripe
     },
   }),
 );
